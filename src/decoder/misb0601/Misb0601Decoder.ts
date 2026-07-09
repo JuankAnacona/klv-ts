@@ -3,6 +3,7 @@ import { Decoder } from "../Decoder";
 import { KlvPacket } from "../../packet/KlvPacket";
 import { UniversalKey } from "../../parser/UniversalKey";
 import { MISB_0601_TAGS } from "./Misb0601Tags";
+import { Misb0601Definition } from "./Misb0601Definition";
 
 export interface Misb0601DecodedElement {
     tag: number;
@@ -39,9 +40,9 @@ export class Misb0601Decoder implements Decoder<Misb0601DecodedLocalSet> {
         const localSet = new LocalSetParser().parse(packet.value);
 
         const elements: Misb0601DecodedElement[] = localSet.elements.map((element) => {
-            const definition = MISB_0601_TAGS.get(element.tag);
-
+            const definition : Misb0601Definition | undefined = MISB_0601_TAGS.get(element.tag);
             if (!definition) {
+                console.log(definition!.name, definition!.decoder.name);
                 return {
                     tag: element.tag,
                     length: element.length,

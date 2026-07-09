@@ -1,30 +1,60 @@
 import { KlvParseError } from "../../errors/KlvParseError";
-import { Misb0601Definition } from "./Misb0601Definition";
+import { DecoderFunction, Misb0601Definition } from "./Misb0601Definition";
 
-const RAW_DECODER = (value: Uint8Array): Uint8Array => value;
+import {
+	RAW_DECODER,
+	STRING_DECODER,
+	UINT16_DECODER,
+	UINT64_DECODER,
+	PLATFORM_HEADING_DECODER,
+	LATITUDE_DECODER,
+	LONGITUDE_DECODER
+} from "../Decoders";
 
-type TagEntry = readonly [id: number, name: string];
+type TagEntry = readonly [id: number, name: string,
+	decoder?: DecoderFunction];
+
 
 const TAG_ENTRIES: readonly TagEntry[] = [
+
 	[0, "Undefined"],
-	[1, "Checksum"],
-	[2, "PrecisionTimeStamp"],
-	[3, "MissionId"],
-	[4, "PlatformTailNumber"],
-	[5, "PlatformHeadingAngle"],
+
+	[1, "Checksum", UINT16_DECODER],
+
+	[2, "PrecisionTimestamp", UINT64_DECODER],
+
+	[3, "MissionId", STRING_DECODER],
+
+	[4, "PlatformTailNumber", STRING_DECODER],
+
+	[5, "PlatformHeadingAngle", PLATFORM_HEADING_DECODER],
+
 	[6, "PlatformPitchAngle"],
+
 	[7, "PlatformRollAngle"],
+
 	[8, "PlatformTrueAirspeed"],
+
 	[9, "PlatformIndicatedAirspeed"],
-	[10, "PlatformDesignation"],
-	[11, "ImageSourceSensor"],
-	[12, "ImageCoordinateSystem"],
-	[13, "SensorLatitude"],
-	[14, "SensorLongitude"],
+
+	[10, "PlatformDesignation", STRING_DECODER],
+
+	[11, "ImageSourceSensor", STRING_DECODER],
+
+	[12, "ImageCoordinateSystem", STRING_DECODER],
+
+	[13, "SensorLatitude", LATITUDE_DECODER],
+
+	[14, "SensorLongitude", LONGITUDE_DECODER],
+
 	[15, "SensorTrueAltitude"],
+
 	[16, "SensorHorizontalFov"],
+
 	[17, "SensorVerticalFov"],
+
 	[18, "SensorRelativeAzimuthAngle"],
+
 	[19, "SensorRelativeElevationAngle"],
 	[20, "SensorRelativeRollAngle"],
 	[21, "SlantRange"],
@@ -156,14 +186,17 @@ const toDisplayName = (name: string): string =>
 		.replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
 		.trim();
 
+const toCamelCase = (name: string): string =>
+	name.charAt(0).toLowerCase() + name.slice(1);
+
 export const MISB_0601_TAGS = new Map<number, Misb0601Definition>(
-	TAG_ENTRIES.map(([id, name]) => [
+	TAG_ENTRIES.map(([id, name, decoder]) => [
 		id,
 		{
 			id,
-			name,
+			name: toCamelCase(name),
 			displayName: toDisplayName(name),
-			decoder: RAW_DECODER
+			decoder: decoder ?? RAW_DECODER
 		}
 	])
 );
@@ -175,58 +208,3 @@ export function getMisb0601Definition(tag: number): Misb0601Definition | undefin
 }
 
 
-const textDecoder = new TextDecoder("utf-8");
-
-function requireLength(value: Uint8Array, expected: number): void {
-	if (value.length !== expected) {
-		throw new KlvParseError(`Invalid value length ${value.length}. Expected ${expected}.`);
-	}
-}
-
-function toUnsigned(value: Uint8Array): number {
-	let result = 0;
-	for (const byte of value) {
-		result = (result * 256) + byte;
-	}
-	return result;
-}
-
-function toSigned(value: Uint8Array): number {
-	const unsigned = toUnsigned(value);
-	const bits = value.length * 8;
-	const signThreshold = Math.pow(2, bits - 1);
-
-	if (unsigned < signThreshold) {
-		return unsigned;
-	}
-
-	return unsigned - Math.pow(2, bits);
-}
-
-function readU64(value: Uint8Array): bigint {
-	requireLength(value, 8);
-
-	let result = 0n;
-	for (const byte of value) {
-		result = (result << 8n) | BigInt(byte);
-	}
-	return result;
-}
-
-function mapUnsigned(value: Uint8Array, min: number, max: number): number {
-	const raw = toUnsigned(value);
-	const maxRaw = Math.pow(2, value.length * 8) - 1;
-	return min + ((max - min) * raw / maxRaw);
-}
-
-function mapSigned(value: Uint8Array, min: number, max: number): number {
-	const raw = toSigned(value);
-	const bits = value.length * 8;
-	const maxRaw = Math.pow(2, bits - 1) - 1;
-	const minRaw = -maxRaw;
-	return min + ((max - min) * (raw - minRaw) / (maxRaw - minRaw));
-}
-
-function readString(value: Uint8Array): string {
-	return textDecoder.decode(value).replace(/\0+$/, "").trim();
-}
