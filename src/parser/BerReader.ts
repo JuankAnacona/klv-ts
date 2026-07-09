@@ -1,4 +1,5 @@
 import { ByteReader } from "./ByteReader";
+import { KlvParseError } from "../errors/KlvParseError";
 
 export class BerReader {
 
@@ -14,7 +15,12 @@ export class BerReader {
         const octets = first & 0x7F;
 
         if (octets === 0) {
-            throw new Error("Indefinite BER lengths are not supported.");
+            throw new KlvParseError("Indefinite BER lengths are not supported.", reader.position - 1);
+        }
+
+        // JavaScript numbers can exactly represent integers up to 2^53 - 1.
+        if (octets > 6) {
+            throw new KlvParseError(`BER length uses too many octets (${octets}).`, reader.position - 1);
         }
 
         let length = 0;

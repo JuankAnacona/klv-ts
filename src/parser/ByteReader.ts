@@ -1,3 +1,5 @@
+import { KlvParseError } from "../errors/KlvParseError";
+
 export class ByteReader {
 
     private readonly data: Uint8Array;
@@ -19,17 +21,25 @@ export class ByteReader {
         return this.remaining >= length;
     }
 
+    private validateLength(length: number): void {
+        if (!Number.isInteger(length) || length < 0) {
+            throw new KlvParseError(`Invalid length ${length}.`, this.offset);
+        }
+    }
+
     readByte(): number {
         if (!this.hasRemaining()) {
-            throw new Error("Unexpected end of buffer.");
+            throw new KlvParseError("Unexpected end of buffer.", this.offset);
         }
 
         return this.data[this.offset++];
     }
 
     readBytes(length: number): Uint8Array {
+        this.validateLength(length);
+
         if (!this.hasRemaining(length)) {
-            throw new Error("Unexpected end of buffer.");
+            throw new KlvParseError("Unexpected end of buffer.", this.offset);
         }
 
         const bytes = this.data.slice(this.offset, this.offset + length);
@@ -39,8 +49,10 @@ export class ByteReader {
     }
 
     skip(length: number): void {
+        this.validateLength(length);
+
         if (!this.hasRemaining(length)) {
-            throw new Error("Unexpected end of buffer.");
+            throw new KlvParseError("Unexpected end of buffer.", this.offset);
         }
 
         this.offset += length;
