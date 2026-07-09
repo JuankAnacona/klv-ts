@@ -42,7 +42,6 @@ export class Misb0601Decoder implements Decoder<Misb0601DecodedLocalSet> {
         const elements: Misb0601DecodedElement[] = localSet.elements.map((element) => {
             const definition : Misb0601Definition | undefined = MISB_0601_TAGS.get(element.tag);
             if (!definition) {
-                console.log(definition!.name, definition!.decoder.name);
                 return {
                     tag: element.tag,
                     length: element.length,

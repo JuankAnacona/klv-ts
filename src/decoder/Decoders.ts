@@ -41,6 +41,33 @@ export const LATITUDE_DECODER = (value: Uint8Array): number =>
 export const LONGITUDE_DECODER = (value: Uint8Array): number =>
     mapSigned(value, -180, 180);
 
+export const PITCH_DECODER = (value: Uint8Array): number =>
+    mapSigned(value, -20, 20);
+
+export const ROLL_DECODER = (value: Uint8Array): number =>
+    mapSigned(value, -50, 50);
+
+export const ANGLE_360_DECODER = (value: Uint8Array): number =>
+    mapUnsigned(value, 0, 360);
+
+export const ANGLE_180_DECODER = (value: Uint8Array): number =>
+    mapUnsigned(value, 0, 180);
+
+export const ELEVATION_DECODER = (value: Uint8Array): number =>
+    mapSigned(value, -180, 180);
+
+export const SLANT_RANGE_DECODER = (value: Uint8Array): number =>
+    mapUnsigned(value, 0, 5000000);
+
+export const TARGET_WIDTH_DECODER = (value: Uint8Array): number =>
+    mapUnsigned(value, 0, 10000);
+
+export const FRAME_CENTER_ELEV_DECODER = (value: Uint8Array): number =>
+    mapSigned(value, -900, 19000);
+
+export const OFFSET_CORNER_DECODER = (value: Uint8Array): number =>
+    mapSigned(value, -0.075, 0.075);
+
 
 function mapSigned(value: Uint8Array, min: number, max: number): number {
     const raw = toSigned(value);
@@ -48,6 +75,12 @@ function mapSigned(value: Uint8Array, min: number, max: number): number {
     const maxRaw = Math.pow(2, bits - 1) - 1;
     const minRaw = -maxRaw;
     return min + ((max - min) * (raw - minRaw) / (maxRaw - minRaw));
+}
+
+function mapUnsigned(value: Uint8Array, min: number, max: number): number {
+    const raw = toUnsigned(value);
+    const maxRaw = Math.pow(2, value.length * 8) - 1;
+    return min + ((max - min) * raw / maxRaw);
 }
 
 function toSigned(value: Uint8Array): number {
