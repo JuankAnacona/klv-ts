@@ -1,8 +1,17 @@
 # klv-ts
 
-Generic SMPTE 336M KLV parser written in TypeScript.
+A modern TypeScript parser for SMPTE 336M KLV packets.
 
-## Install
+## Features
+
+- Generic SMPTE 336M parser
+- Browser support
+- Node.js support
+- Zero dependencies
+- Tree-shakeable
+- TypeScript first
+
+## Installation
 
 ```bash
 npm install klv-ts
