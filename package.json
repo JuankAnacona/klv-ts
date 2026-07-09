@@ -1,0 +1,32 @@
+{
+  "name": "klv-ts",
+  "version": "0.1.0",
+  "description": "Generic SMPTE 336M KLV parser for TypeScript",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --dts",
+    "test": "vitest",
+    "dev": "vitest",
+    "lint": "tsc --noEmit"
+  },
+  "keywords": [
+    "klv",
+    "misb",
+    "mpegts",
+    "smpte",
+    "metadata",
+    "video"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "tsup": "^8.5.1",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
+  }
+}
