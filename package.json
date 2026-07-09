@@ -1,19 +1,28 @@
 {
   "name": "klv-ts",
   "version": "0.1.0",
-  "description": "Generic SMPTE 336M KLV parser for TypeScript",
+  "description": "Generic SMPTE 336M KLV parser for JavaScript and TypeScript",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./dist/index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsup src/index.ts --dts",
-    "test": "vitest",
-    "dev": "vitest",
-    "lint": "tsc --noEmit"
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "pnpm build && pnpm test"
   },
   "keywords": [
     "klv",
@@ -21,12 +30,18 @@
     "mpegts",
     "smpte",
     "metadata",
-    "video"
+    "video",
+    "uas"
   ],
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JuankAnacona/klv-ts.git"
+  },
   "dependencies": {
     "tsup": "^8.5.1",
-    "typescript": "^7.0.2",
     "vitest": "^4.1.10"
+  },
+  "devDependencies": {
+    "typescript": "5.9.2"
   }
 }
