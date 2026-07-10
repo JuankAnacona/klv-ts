@@ -1,25 +1,33 @@
+import { KlvMetadata } from "../KlvMetadata";
 import { KlvPacket } from "../packet/KlvPacket";
 import { Decoder } from "./Decoder";
 
 export class DecoderRegistry {
 
-    private readonly decoders: Decoder[] = [];
+    private readonly decoders =
+        new Map<string, Decoder<any>>();
 
-    register(decoder: Decoder): void {
-        this.decoders.push(decoder);
+    register<T>(decoder: Decoder<T>): void {
+
+        this.decoders.set(
+            decoder.key.toString(),
+            decoder
+        );
+
     }
 
-    decode<T>(packet: KlvPacket): T {
+    decode(packet: KlvPacket): KlvMetadata {
 
-        for (const decoder of this.decoders) {
+        const decoder = this.decoders.get(
+            packet.key.toString()
+        );
 
-            if (decoder.canDecode(packet)) {
-                return decoder.decode(packet) as T;
-            }
-
+        if (!decoder) {
+            return packet as unknown as KlvMetadata;
         }
 
-        return packet as unknown as T;
+        return decoder.decode(packet);
+
     }
 
 }

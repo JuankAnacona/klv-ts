@@ -102,7 +102,7 @@ describe("Klv", () => {
 
         ]);
 
-        const metadata = Klv.parse<Misb0601Metadata>(
+        const metadata = Klv.parse(
             Uint8Array.from([
                 ...UAS_KEY,
                 localSet.length,
@@ -126,7 +126,7 @@ describe("Klv", () => {
             0xBB
         ]);
 
-        const metadata = Klv.parse<Misb0601Metadata>(
+        const metadata = Klv.parse(
             Uint8Array.from([
                 ...UAS_KEY,
                 localSet.length,
@@ -160,7 +160,7 @@ describe("Klv", () => {
 
         ]);
 
-        const metadata = Klv.parse<Misb0601Metadata>(
+        const metadata = Klv.parse(
             Uint8Array.from([
                 ...UAS_KEY,
                 localSet.length,

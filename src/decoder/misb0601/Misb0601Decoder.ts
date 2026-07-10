@@ -18,6 +18,12 @@ export interface Misb0601DecodedElement {
 
 
 export class Misb0601Decoder implements Decoder<Misb0601Metadata> {
+     readonly key = new UniversalKey(Uint8Array.from([
+        0x06,0x0E,0x2B,0x34,
+        0x02,0x0B,0x01,0x01,
+        0x0E,0x01,0x03,0x01,
+        0x01,0x00,0x00,0x00
+    ]));
 
     readonly name = "MISB ST 0601";
 

@@ -2,6 +2,7 @@ import { KlvParser } from "./parser/KlvParser";
 import { DecoderRegistry } from "./decoder/DecoderRegistry";
 import { Misb0601Decoder } from "./decoder/misb0601/Misb0601Decoder";
 import { KlvPacket } from "./packet/KlvPacket";
+import { KlvMetadata } from "./KlvMetadata";
 
 export class Klv {
 
@@ -15,19 +16,19 @@ export class Klv {
 
     }
 
-    static parse<T>(bytes: Uint8Array): T {
+    static parse(bytes: Uint8Array): KlvMetadata {
 
         const packet = this.parser.parse(bytes);
 
-        return this.registry.decode<T>(packet);
+        return this.registry.decode(packet);
 
     }
 
-    static parseAll<T>(bytes: Uint8Array): T[] {
+    static parseAll(bytes: Uint8Array): KlvMetadata[] {
 
         return this.parser
             .parseAll(bytes)
-            .map(packet => this.registry.decode<T>(packet));
+            .map(packet => this.registry.decode(packet));
 
     }
 
