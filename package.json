@@ -1,6 +1,6 @@
 {
   "name": "klv-ts",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generic SMPTE 336M KLV parser for JavaScript and TypeScript",
   "license": "MIT",
   "type": "module",
