@@ -9,17 +9,17 @@ export class DecoderRegistry {
         this.decoders.push(decoder);
     }
 
-    decode(packet: KlvPacket): unknown {
+    decode<T>(packet: KlvPacket): T {
 
         for (const decoder of this.decoders) {
 
             if (decoder.canDecode(packet)) {
-                return decoder.decode(packet);
+                return decoder.decode(packet) as T;
             }
 
         }
 
-        return packet;
+        return packet as unknown as T;
     }
 
 }

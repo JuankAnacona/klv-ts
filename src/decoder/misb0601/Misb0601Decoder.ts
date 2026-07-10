@@ -4,6 +4,7 @@ import { KlvPacket } from "../../packet/KlvPacket";
 import { UniversalKey } from "../../parser/UniversalKey";
 import { MISB_0601_TAGS } from "./Misb0601Tags";
 import { Misb0601Definition } from "./Misb0601Definition";
+import { Misb0601Metadata } from "./Misb0601Metadata";
 
 export interface Misb0601DecodedElement {
     tag: number;
@@ -15,12 +16,8 @@ export interface Misb0601DecodedElement {
     rawValue: Uint8Array;
 }
 
-export interface Misb0601DecodedLocalSet {
-    packet: KlvPacket;
-    elements: Misb0601DecodedElement[];
-}
 
-export class Misb0601Decoder implements Decoder<Misb0601DecodedLocalSet> {
+export class Misb0601Decoder implements Decoder<Misb0601Metadata> {
 
     readonly name = "MISB ST 0601";
 
@@ -35,7 +32,7 @@ export class Misb0601Decoder implements Decoder<Misb0601DecodedLocalSet> {
         return packet.key.equals(Misb0601Decoder.UAS_DATALINK_LOCAL_SET_KEY);
     }
 
-    decode(packet: KlvPacket): Misb0601DecodedLocalSet {
+    decode(packet: KlvPacket): Misb0601Metadata {
 
         const localSet = new LocalSetParser().parse(packet.value);
 
@@ -62,11 +59,13 @@ export class Misb0601Decoder implements Decoder<Misb0601DecodedLocalSet> {
                 rawValue: element.value
             };
         });
+        const metadata = new Misb0601Metadata(packet);
 
-        return {
-            packet,
-            elements
-        };
+        for (const element of elements) {
+            metadata[element.name] = element.value;
+        }
+        return metadata;
+
 
     }
 
