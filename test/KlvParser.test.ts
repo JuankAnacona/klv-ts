@@ -444,7 +444,7 @@ describe("Klv", () => {
 };
 
        const metadata = Klv.parseJsonKlv(jsonklv);
-       console.log(metadata);
+       console.log("Resultado del test:", metadata);
 
 
     });
