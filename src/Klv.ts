@@ -39,13 +39,28 @@ export class Klv {
     }
 
     static readAll(bytes: Uint8Array): KlvPacket[] {
-    return this.parser.parseAll(bytes);
-}
+        return this.parser.parseAll(bytes);
+    }
 
     static register(decoder: any): void {
 
         this.registry.register(decoder);
 
+    }
+
+    static parseJsonKlv(packet: {
+        pid: number;
+        stream_id: number;
+        len: number;
+        data: Record<string, number>;
+    }) {
+        const bytes = Uint8Array.from(
+            Object.values(packet.data)
+        );
+        console.log(bytes.length);
+        console.log(packet.len);
+
+        return this.parse(bytes);
     }
 
 }

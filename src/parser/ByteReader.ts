@@ -35,18 +35,18 @@ export class ByteReader {
         return this.data[this.offset++];
     }
 
-    readBytes(length: number): Uint8Array {
-        this.validateLength(length);
+readBytes(length: number): Uint8Array {
+    this.validateLength(length);
 
-        if (!this.hasRemaining(length)) {
-            throw new KlvParseError("Unexpected end of buffer.", this.offset);
-        }
-
-        const bytes = this.data.slice(this.offset, this.offset + length);
-        this.offset += length;
-
-        return bytes;
+    if (!this.hasRemaining(length)) {
+        throw new KlvParseError("Unexpected end of buffer.", this.offset);
     }
+
+    const bytes = this.data.slice(this.offset, this.offset + length);
+    this.offset += length;
+
+    return bytes;
+}
 
     skip(length: number): void {
         this.validateLength(length);
