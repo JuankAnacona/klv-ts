@@ -57,8 +57,6 @@ export class Klv {
         const bytes = Uint8Array.from(
             Object.values(packet.data)
         );
-        console.log(bytes.length);
-        console.log(packet.len);
 
         return this.parse(bytes);
     }

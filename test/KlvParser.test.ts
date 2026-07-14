@@ -444,7 +444,7 @@ describe("Klv", () => {
 };
 
        const metadata = Klv.parseJsonKlv(jsonklv);
-       console.log("Resultado del test:", metadata);
+       expect(metadata.missionId).toBe("ESRI_Metadata_Collect");
 
 
     });
