@@ -52,11 +52,15 @@ export class Klv {
         pid: number;
         stream_id: number;
         len: number;
-        data: Record<string, number>;
+        data: Record<string, number> | Uint8Array;
     }) {
-        const bytes = Uint8Array.from(
-            Object.values(packet.data)
-        );
+        let bytes: Uint8Array;
+
+        if (packet.data instanceof Uint8Array) {
+            bytes = packet.data;
+        } else {
+            bytes = Uint8Array.from(Object.values(packet.data));
+        }
 
         return this.parse(bytes);
     }
